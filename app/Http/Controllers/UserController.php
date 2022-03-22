@@ -38,7 +38,7 @@ class UserController extends Controller
         return json_encode(['error' => 'noname']);
     }
 
-    public function checktoken(Request $request)
+    public function check_token(Request $request)
     {
         $user = User::where('remember_token', $request->token)->first();
         if ($user != null) {
@@ -47,9 +47,5 @@ class UserController extends Controller
             return json_encode(['status' => 0]);
         }
 
-    }
-    public function get_user($id)
-    {
-        return json_encode(User::where('id', $id)->first());
     }
 }

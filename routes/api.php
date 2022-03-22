@@ -20,5 +20,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('register', [UserController::class, 'register']);
 Route::post('login', [UserController::class, 'login']);
-Route::post('checktoken', [UserController::class, 'checktoken']);
-Route::get('user/{id}',[UserController::class, 'get_user']);
+Route::post('check-token', [UserController::class, 'check_token']);
+
+Route::get('main-levels/{id}', [LevelController::class, 'get_main_levels']);
+Route::get('community-levels', [LevelController::class, 'get_community_levels']);
+Route::post('post-level', [LevelController::class, 'post_community_level']); 
