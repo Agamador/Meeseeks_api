@@ -25,5 +25,5 @@ Route::post('login', [UserController::class, 'login']);
 Route::post('check-token', [UserController::class, 'check_token']);
 
 Route::get('main-levels/{id}', [LevelController::class, 'get_main_levels']);
-Route::get('community-levels', [LevelController::class, 'get_community_levels']);
+Route::get('community-levels/{id}', [LevelController::class, 'get_community_levels']);
 Route::post('post-level', [LevelController::class, 'post_community_level']); 

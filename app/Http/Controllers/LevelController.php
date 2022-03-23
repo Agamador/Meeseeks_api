@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 
 class LevelController extends Controller
 {
+
+    //si usuario tiene el nivel superado sacar también % de éxito y puntuación
     public function get_main_levels($user_id)
     {
         $levels = Level::select('id', 'name')->where('user_id', 1)->get();
@@ -17,7 +19,7 @@ class LevelController extends Controller
             $current_level = Score::where('user_id', $user_id)->where('level_id', $l->id)->first();
             if ($current_level != null){
                 $last_level = $l->id;
-                $superados += [$l->id => ['name'=> $l->name]];
+                $superados += [$l->id => ['name'=> $l->name, 'self_percent'=>$current_level->percent,'hi'=>$current_level->value]];
                 $top = Score::join('users', 'users.id', 'scores.user_id')->select('scores.value','users.name')->where('level_id', $l->id)->orderBy('value', 'desc')->take(3)->get();
                 for($i = 0; $i < $top->count(); $i++){
                     $superados[$l->id] += ['top_'.($i+1) => ['score'=> $top[$i]->value, 'name'=> $top[$i]->name]];
@@ -38,17 +40,20 @@ class LevelController extends Controller
         return json_encode($superados);
     }
 
-    public function get_community_levels()
+    public function get_community_levels($user_id)
     {
         $levels = Level::select('id', 'name')->where('user_id', '!=', 1)->get();
+        $result = [];
         if (!$levels->isEmpty()) {
-            $result = [];
             foreach ($levels as $l) {
                 $actual_level = [$l->id =>[ 'name' => $l->name]];
-
+                $self_score = Score::where('user_id', $user_id)->where('level_id', $l->id)->first();
+                if ($self_score != null){
+                    $actual_level[$l->id] += ['self_percent'=>$self_score->percent, 'hi'=>$self_score->value];
+                }
                 $top = Score::join('users', 'users.id', 'scores.user_id')->select('scores.value', 'users.name')->where('level_id', $l->id)->orderBy('value', 'desc')->take(3)->get();
                 for ($i = 0; $i < $top->count(); $i++) {
-                    $actual_level[$l->id] += ['top_' . $i+1 => ['score' => $top[$i]->value, 'name' => $top[$i]->name]];
+                    $actual_level[$l->id] += ['top_' . ($i+1) => ['score' => $top[$i]->value, 'name' => $top[$i]->name]];
                 }
                 // array_push($result, $actual_level);
                 $result += $actual_level;
