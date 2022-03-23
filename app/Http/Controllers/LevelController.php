@@ -81,6 +81,16 @@ class LevelController extends Controller
 
     public function get_level($level_id)
     {
-        return false;
+        $level = Level::where('id', $level_id)->first();
+        $result = ['file_name'=>$level->file_name,
+            'lives'=>$level->lives, 
+            'digsideers'=>$level->digsideers, 
+            'digdowners'=>$level->digdowners,
+            'stopperers'=>$level->stopperers,
+            'umbrellaers'=>$level->umbrellaers,
+            'stairers'=>$level->stairers,
+            'climbers'=>$level->climbers,
+            'scene'=>$level->scene];
+        return json_encode($result);
     }
 }
