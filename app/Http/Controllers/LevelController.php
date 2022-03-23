@@ -10,7 +10,32 @@ class LevelController extends Controller
 {
     public function get_main_levels($user_id)
     {
-        Level::select('id', 'name')->where('user_id', 1)->get();
+        $levels = Level::select('id', 'name')->where('user_id', 1)->get();
+        $superados = [];
+        $last_level = 0;
+        foreach($levels as $l){
+            $current_level = Score::where('user_id', $user_id)->where('level_id', $l->id)->first();
+            if ($current_level != null){
+                $last_level = $l->id;
+                $superados += [$l->id => ['name'=> $l->name]];
+                $top = Score::join('users', 'users.id', 'scores.user_id')->select('scores.value','users.name')->where('level_id', $l->id)->orderBy('value', 'desc')->take(3)->get();
+                for($i = 0; $i < $top->count(); $i++){
+                    $superados[$l->id] += ['top_'.($i+1) => ['score'=> $top[$i]->value, 'name'=> $top[$i]->name]];
+                }
+            }
+        }
+        if (empty($superados)){
+            //el nivel inicial del juego siempre va a ser el id numero 1 de la base de datos.
+            $level = Level::select('id','name')->where('id', 1)->first();
+            $superados = ['id'=> $level->id,'name'=>$level->name];
+        }
+        else{
+            //20 o el id del último nivel del modo historia
+            if($last_level < 20)
+            $level = Level::select('id','name')->where('id',$last_level+1)->first();
+            $superados += [$level->id => ['name'=> $level->name]];
+        }
+        return json_encode($superados);
     }
 
     public function get_community_levels()
@@ -21,9 +46,9 @@ class LevelController extends Controller
             foreach ($levels as $l) {
                 $actual_level = [$l->id =>[ 'name' => $l->name]];
 
-                $top = Score::join('users', 'users.id', 'scores.user_id')->select('scores.value', 'users.name')->where('level_id', $l->id)->orderBy('value')->take(3)->get();
+                $top = Score::join('users', 'users.id', 'scores.user_id')->select('scores.value', 'users.name')->where('level_id', $l->id)->orderBy('value', 'desc')->take(3)->get();
                 for ($i = 0; $i < $top->count(); $i++) {
-                    $actual_level[$l->id] += ["top_" . $i => ["score" => $top[$i]->value, "name" => $top[$i]->name]];
+                    $actual_level[$l->id] += ['top_' . $i+1 => ['score' => $top[$i]->value, 'name' => $top[$i]->name]];
                 }
                 // array_push($result, $actual_level);
                 $result += $actual_level;
