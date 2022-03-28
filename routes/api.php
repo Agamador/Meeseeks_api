@@ -28,3 +28,5 @@ Route::get('main-levels/{id}', [LevelController::class, 'get_main_levels']);
 Route::get('community-levels/{id}', [LevelController::class, 'get_community_levels']);
 Route::post('post-level', [LevelController::class, 'post_community_level']);
 Route::get('get-level/{id}', [LevelController::class, 'get_level']); 
+
+Route::post('store-score', [ScoreController::class, 'store_score']);
