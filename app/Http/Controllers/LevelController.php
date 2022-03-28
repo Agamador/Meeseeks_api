@@ -29,7 +29,7 @@ class LevelController extends Controller
         if (empty($superados)){
             //el nivel inicial del juego siempre va a ser el id numero 1 de la base de datos.
             $level = Level::select('id','name')->where('id', 1)->first();
-            $superados = ['id'=> $level->id,'name'=>$level->name];
+            $superados = [$level->id=>['name'=>$level->name]];
         }
         else{
             //20 o el id del último nivel del modo historia

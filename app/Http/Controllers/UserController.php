@@ -42,7 +42,7 @@ class UserController extends Controller
     {
         $user = User::where('remember_token', $request->token)->first();
         if ($user != null) {
-            return json_encode(['status' => 1, 'username' => $user->name]);
+            return json_encode(['status' => 1, 'username' => $user->name, 'id'=> $user->id]);
         } else {
             return json_encode(['status' => 0]);
         }
