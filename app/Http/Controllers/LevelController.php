@@ -12,13 +12,13 @@ class LevelController extends Controller
     //si usuario tiene el nivel superado sacar también % de éxito y puntuación
     public function get_main_levels($user_id)
     {
-        $levels = Level::select('id', 'name')->where('user_id', 1)->get();
+        $levels = Level::select('id', 'name','next_level')->whereNull('user_id')->get();
         $superados = [];
         $last_level = 0;
         foreach($levels as $l){
             $current_level = Score::where('user_id', $user_id)->where('level_id', $l->id)->first();
             if ($current_level != null){
-                $last_level = $l->id;
+                $last_level = ['id'=> $l->id,'next_level'=> $l->next_level];
                 $superados += [$l->id => ['name'=> $l->name, 'self_percent'=>$current_level->percent,'hi'=>$current_level->value]];
                 $top = Score::join('users', 'users.id', 'scores.user_id')->select('scores.value','users.name')->where('level_id', $l->id)->orderBy('value', 'desc')->take(3)->get();
                 for($i = 0; $i < $top->count(); $i++){
@@ -27,22 +27,21 @@ class LevelController extends Controller
             }
         }
         if (empty($superados)){
-            //el nivel inicial del juego siempre va a ser el id numero 1 de la base de datos.
-            $level = Level::select('id','name')->where('id', 1)->first();
+            //el nivel inicial pasa a ser el más antiguo de los iniciales
+            $level = Level::select('id','name','created_at')->whereNull('user_id')->orderBy('created_at')->first();
             $superados = [$level->id=>['name'=>$level->name]];
         }
         else{
-            //20 o el id del último nivel del modo historia
-            if($last_level < 20)
-            $level = Level::select('id','name')->where('id',$last_level+1)->first();
-            $superados += [$level->id => ['name'=> $level->name]];
+            if($last_level['next_level'] != null)
+                $level = Level::select('id','name')->where('id',$last_level['next_level'])->first();
+                $superados += [$level->id => ['name'=> $level->name]];
         }
         return json_encode($superados);
     }
 
     public function get_community_levels($user_id)
     {
-        $levels = Level::select('id', 'name')->where('user_id', '!=', 1)->get();
+        $levels = Level::select('id', 'name')->whereNotNull('user_id')->get();
         $result = [];
         if (!$levels->isEmpty()) {
             foreach ($levels as $l) {
@@ -55,7 +54,6 @@ class LevelController extends Controller
                 for ($i = 0; $i < $top->count(); $i++) {
                     $actual_level[$l->id] += ['top_' . ($i+1) => ['score' => $top[$i]->value, 'name' => $top[$i]->name]];
                 }
-                // array_push($result, $actual_level);
                 $result += $actual_level;
             }
         }
