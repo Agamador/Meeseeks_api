@@ -27,10 +27,10 @@ class LevelController extends Controller
 
         if (empty($superados)) {
             //el nivel inicial pasa a ser el más antiguo de los iniciales
-            $superados += [$levels[0]->id => ['name', $levels[0]->id]];
-            $top = Score::join('users', 'users.id', 'scores.user_id')->select('scores.value', 'users.name')->where('level_id', $l->id)->orderBy('value', 'desc')->take(3)->get();
+            $superados += [$levels[0]['id'] => ['name'=> $levels[0]['name']]];
+            $top = Score::join('users', 'users.id', 'scores.user_id')->select('scores.value', 'users.name')->where('level_id', $levels[0]['id'])->orderBy('value', 'desc')->take(3)->get();
             for ($i = 0; $i < $top->count(); $i++) {
-                $superados[$levels[0]->id] += ['top_' . ($i + 1) => ['score' => $top[$i]->value, 'name' => $top[$i]->name]];
+                $superados[$levels[0]['id']] += ['top_' . ($i + 1) => ['score' => $top[$i]->value, 'name' => $top[$i]->name]];
             }
         } else {
             if (array_key_last($superados) != $levels->last()->id) {
