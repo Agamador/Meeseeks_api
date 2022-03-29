@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class EditLevelsTable2 extends Migration
+class CreateLevelsOrderTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,9 @@ class EditLevelsTable2 extends Migration
      */
     public function up()
     {
-        Schema::table('levels', function (Blueprint $table) {
-            $table->integer('next_level')->nullable()->after('scene');
-            $table->foreignId('user_id')->nullable()->change();
+        Schema::create('levels_order', function (Blueprint $table) {
+            $table->integer('order');
+            $table->integer('level_id');
         });
     }
 
@@ -26,8 +26,6 @@ class EditLevelsTable2 extends Migration
      */
     public function down()
     {
-        if (Schema::hasColumn('levels', 'next_level')) {
-            $table->dropColumn('next_level');
-        }
+        Schema::dropIfExists('levels_order');
     }
 }
