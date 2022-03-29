@@ -14,7 +14,7 @@ class CreateLevelsOrderTable extends Migration
     public function up()
     {
         Schema::create('levels_order', function (Blueprint $table) {
-            $table->integer('order');
+            $table->integer('order')->unique();
             $table->integer('level_id');
         });
     }
