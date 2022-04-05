@@ -24,7 +24,7 @@ class CreateLevelsTable extends Migration
             $table->integer('umbrellaers');
             $table->integer('stairers');
             $table->integer('climbers');
-            $table->text('scene');
+            $table->mediumText('scene');
             $table->timestamps();
         });
     }

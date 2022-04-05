@@ -24,7 +24,6 @@ class LevelController extends Controller
 
             }
         }
-
         if (empty($superados)) {
             //el nivel inicial pasa a ser el más antiguo de los iniciales
             $superados += [$levels[0]['id'] => ['name'=> $levels[0]['name']]];
@@ -43,7 +42,6 @@ class LevelController extends Controller
                 }
             }
         }
-
         return json_encode($superados);
     }
 
