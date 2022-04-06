@@ -47,11 +47,11 @@ class LevelController extends Controller
 
     public function get_community_levels($user_id)
     {
-        $levels = Level::select('id', 'name')->whereNotNull('user_id')->get();
+        $levels = Level::select('levels.id', 'levels.name as name','users.name as user_name')->join('users','users.id','levels.user_id')->get();
         $result = [];
         if (!$levels->isEmpty()) {
             foreach ($levels as $l) {
-                $actual_level = [$l->id => ['name' => $l->name]];
+                $actual_level = [$l->id => ['name' => $l->name, 'user_name'=> $l->user_name]];
                 $self_score = Score::where('user_id', $user_id)->where('level_id', $l->id)->first();
                 if ($self_score != null) {
                     $actual_level[$l->id] += ['self_percent' => $self_score->percent, 'hi' => $self_score->value];
