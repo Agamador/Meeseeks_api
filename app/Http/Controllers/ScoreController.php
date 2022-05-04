@@ -22,7 +22,7 @@ class ScoreController extends Controller
                 $score->saves = $request->saves;
                 $score->losses = $request->losses;
                 $score->time = $request->time;
-                $score->save();
+                $score->update();
             }
 
         } else {
