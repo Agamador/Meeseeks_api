@@ -14,6 +14,7 @@ class CreateLevelsTable extends Migration
     public function up()
     {
         Schema::create('levels', function (Blueprint $table) {
+            \Illuminate\Support\Facades\DB::statement('SET SESSION sql_require_primary_key=0');
             $table->id();
             $table->char('name', 50);
             $table->foreignId('user_id')->references('id')->on('users');
