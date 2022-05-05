@@ -17,7 +17,7 @@ class CreateLevelsTable extends Migration
             \Illuminate\Support\Facades\DB::statement('SET SESSION sql_require_primary_key=0');
             $table->id();
             $table->char('name', 50);
-            $table->foreignId('user_id')->references('id')->on('users');
+            $table->foreignId('user_id')->references('id')->on('users')->nullable();
             $table->integer('lives');
             $table->integer('digsideers');
             $table->integer('digdowners');
