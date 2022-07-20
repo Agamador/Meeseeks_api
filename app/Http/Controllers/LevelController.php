@@ -81,6 +81,7 @@ class LevelController extends Controller
         $level->climbers = $request->climbers;
         $level->scene = $request->scene;
         $level->save();
+        
     }
 
     public function get_level($level_id)
